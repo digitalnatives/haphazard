@@ -32,4 +32,43 @@ defmodule HaphazardTest do
     assert conn.status == 304
   end
 
+  test "test not matching route, matching verb" do
+    conn =
+    :post
+      |> conn("/notmyroute", "some_body")
+      |> call()
+    assert conn.status == 200
+    conn =
+    :post
+      |> conn("/notmyroute", "some_body")
+      |> call()
+    assert conn.status == 200
+  end
+
+  test "test matching route, not matching verb" do
+    conn =
+    :get
+      |> conn("/myroute", "some_body")
+      |> call()
+    assert conn.status == 200
+    conn =
+    :get
+      |> conn("/myroute", "some_body")
+      |> call()
+    assert conn.status == 200
+  end
+
+  test "test not matching route, not matching verb" do
+    conn =
+    :get
+      |> conn("/notmyroute", "some_body")
+      |> call()
+    assert conn.status == 200
+    conn =
+    :get
+      |> conn("/notmyroute", "some_body")
+      |> call()
+    assert conn.status == 200
+  end
+
 end

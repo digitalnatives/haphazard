@@ -3,11 +3,19 @@ defmodule Haphazard.Cache do
   import Plug.Conn
   alias Haphazard.Server
 
-  def init(opts), do: opts
-  def call(conn, _config) do
-    case conn.method do
-      "GET" -> conn
-      _     -> check_cache(conn)
+  def init(opts) do
+    methods = Keyword.fetch!(opts, :methods)
+    path = Keyword.fetch!(opts, :path)
+    {methods, path}
+  end
+
+  def call(conn, {methods, path}) do
+    if conn.method in methods
+      and Regex.match?(path, conn.request_path)
+    do
+      check_cache(conn)
+    else
+      conn
     end
   end
 
