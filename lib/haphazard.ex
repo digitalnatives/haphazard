@@ -1,0 +1,2 @@
+defmodule Haphazard do
+end
