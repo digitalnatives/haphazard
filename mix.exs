@@ -18,6 +18,7 @@ defmodule Haphazard.Mixfile do
   defp deps do
     [
       {:plug, "~> 1.3"},
+      {:credo, "~> 0.6.1", only: [:dev, :test]},
     ]
   end
 end

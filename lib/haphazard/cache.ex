@@ -3,6 +3,7 @@ defmodule Haphazard.Cache do
   import Plug.Conn
   alias Haphazard.Server
 
+  @spec init(Keyword.t) :: {[String.t], Regex.t, integer}
   def init(opts) do
     methods = Keyword.get(opts, :methods, ~w(GET HEAD))
     path = Keyword.get(opts, :path, ~r/.*/)
@@ -10,6 +11,7 @@ defmodule Haphazard.Cache do
     {methods, path, ttl}
   end
 
+  @spec call(Plug.Conn.t, {[String.t], Regex.t, integer}) :: Plug.Conn.t
   def call(conn, {methods, path, ttl}) do
     if conn.method in methods
       and Regex.match?(path, conn.request_path)

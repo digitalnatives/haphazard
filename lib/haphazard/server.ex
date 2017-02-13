@@ -28,7 +28,8 @@ defmodule Haphazard.Server do
     GenServer.cast(__MODULE__, {:store, key, body, ttl})
   end
 
-  @spec handle_call({:lookup, any()}, pid(), any()) :: {:reply, {:cached, any}, any()} | {:reply, :not_cached, any()}
+  @spec handle_call({:lookup, any()}, pid(), any())
+    :: {:reply, {:cached, any}, any()} | {:reply, :not_cached, any()}
   def handle_call({:lookup, key}, _from, state) do
     case :ets.lookup(@table_name, key) do
       [{^key, cached}] -> {:reply, {:cached, cached}, state}
