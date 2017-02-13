@@ -9,7 +9,8 @@ defmodule HaphazardTest do
 
     plug Haphazard.Cache,
       methods: ~w(POST),
-      path: ~r/^\/myroute/
+      path: ~r/^\/myroute/,
+      ttl: 3000
 
     plug :endroute
 
@@ -67,6 +68,25 @@ defmodule HaphazardTest do
     conn =
     :get
       |> conn("/notmyroute", "some_body")
+      |> call()
+    assert conn.status == 200
+  end
+
+  test "test cache expiration" do
+    conn =
+    :post
+      |> conn("/myroute", "another_body")
+      |> call()
+    assert conn.status == 200
+    conn =
+    :post
+      |> conn("/myroute", "another_body")
+      |> call()
+    assert conn.status == 304
+    :timer.sleep(3000)
+    conn =
+    :post
+      |> conn("/myroute", "another_body")
       |> call()
     assert conn.status == 200
   end

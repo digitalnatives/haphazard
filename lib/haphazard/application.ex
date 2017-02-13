@@ -5,7 +5,7 @@ defmodule Haphazard.Application do
     import Supervisor.Spec, warn: false
 
     children = [
-      worker(Haphazard.Server, [15 * 60 * 1000])
+      worker(Haphazard.Server, [])
     ]
 
     opts = [strategy: :one_for_one, name: Haphazard.Supervisor]

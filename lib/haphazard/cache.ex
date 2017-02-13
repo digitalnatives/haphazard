@@ -4,22 +4,23 @@ defmodule Haphazard.Cache do
   alias Haphazard.Server
 
   def init(opts) do
-    methods = Keyword.fetch!(opts, :methods)
-    path = Keyword.fetch!(opts, :path)
-    {methods, path}
+    methods = Keyword.get(opts, :methods, ~w(GET HEAD))
+    path = Keyword.get(opts, :path, ~r/.*/)
+    ttl = Keyword.get(opts, :ttl, 15 * 60 * 1000)
+    {methods, path, ttl}
   end
 
-  def call(conn, {methods, path}) do
+  def call(conn, {methods, path, ttl}) do
     if conn.method in methods
       and Regex.match?(path, conn.request_path)
     do
-      check_cache(conn)
+      check_cache(conn, ttl)
     else
       conn
     end
   end
 
-  defp check_cache(conn) do
+  defp check_cache(conn, ttl) do
     case conn |> hash_key() |> Server.lookup_request() do
       {:cached, resp_body} ->
         conn
@@ -28,7 +29,7 @@ defmodule Haphazard.Cache do
           |> halt
       :not_cached ->
         conn
-          |> register_before_send(&save_cache(&1))
+          |> register_before_send(&save_cache(&1, ttl))
           |> save_req_body()
     end
   end
@@ -39,10 +40,10 @@ defmodule Haphazard.Cache do
     hash |> Base.encode16
   end
 
-  defp save_cache(conn) do
+  defp save_cache(conn, ttl) do
     conn
       |> hash_key2()
-      |> Server.store_cache(conn.resp_body)
+      |> Server.store_cache(conn.resp_body, ttl)
     conn
   end
 
