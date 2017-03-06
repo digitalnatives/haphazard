@@ -29,7 +29,7 @@ defmodule Haphazard.Cache do
       {:cached, resp_body} ->
         conn
           |> put_resp_content_type("text/xml")
-          |> send_resp(304, resp_body)
+          |> send_resp(200, resp_body)
           |> halt
       :not_cached ->
         conn
