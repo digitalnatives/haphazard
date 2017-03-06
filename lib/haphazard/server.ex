@@ -50,4 +50,9 @@ defmodule Haphazard.Server do
     {:noreply, state}
   end
 
+  @spec handle_cast(:cleanup, any()) :: {:noreply, any()}
+  def handle_cast(:cleanup, state) do
+    :ets.delete_all_objects(@table_name)
+    {:noreply, state}
+  end
 end
