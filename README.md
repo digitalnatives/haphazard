@@ -1,19 +1,37 @@
 # Haphazard
 
-**TODO: Add description**
+Haphazard is an ETS based plug for caching response body.
+Check the [Online Documentation](https://hexdocs.pm/haphazard)
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `haphazard` to your list of dependencies in `mix.exs`:
+Add `haphazard` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
-  [{:haphazard, "~> 0.1.0"}]
+  [{:haphazard, "~> 0.3.0"}]
 end
 ```
+put it in `applications`
+```elixir
+applications: [:logger, ..., :haphazard]
+```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/haphazard](https://hexdocs.pm/haphazard).
+## Usage
+Setup in your plug router:
+```elixir
+plug Haphazard.Plug
+```
+Additional configurations (optional):
+```elixir
+plug Haphazard.Plug,
+  methods: ~w(GET HEAD),
+  path: ~r/\/myroute/,
+  ttl: 60_000,
+  enabled: true
+```
 
+The additional configurations reflect the default values.
+
+## License
+Source code is released under MIT License. Check LICENSE for more information.
