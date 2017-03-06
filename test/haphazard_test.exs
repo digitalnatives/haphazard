@@ -91,4 +91,32 @@ defmodule HaphazardTest do
     assert conn.status == 200
   end
 
+  defmodule TestDisabledPlug do
+    use Plug.Builder
+
+    plug Haphazard.Cache,
+      enabled: false,
+      ttl: 3000
+
+    plug :endroute
+
+    defp endroute(conn, _), do:
+      Plug.Conn.send_resp(conn, 200, "ok")
+  end
+
+  defp call(conn), do: TestDisabledPlug.call(conn, %{})
+
+  test "test disabled plug" do
+    conn =
+    :get
+      |> conn("/myroute")
+      |> call()
+    assert conn.status == 200
+    conn =
+    :get
+      |> conn("/myroute")
+      |> call()
+    assert conn.status == 200
+  end
+
 end

@@ -3,18 +3,20 @@ defmodule Haphazard.Cache do
   import Plug.Conn
   alias Haphazard.Server
 
-  @spec init(Keyword.t) :: {[String.t], Regex.t, integer}
+  @spec init(Keyword.t) :: {[String.t], Regex.t, integer, boolean}
   def init(opts) do
     methods = Keyword.get(opts, :methods, ~w(GET HEAD))
     path = Keyword.get(opts, :path, ~r/.*/)
     ttl = Keyword.get(opts, :ttl, 15 * 60 * 1000)
-    {methods, path, ttl}
+    enabled = Keyword.get(opts, :enabled, true)
+    {methods, path, ttl, enabled}
   end
 
-  @spec call(Plug.Conn.t, {[String.t], Regex.t, integer}) :: Plug.Conn.t
-  def call(conn, {methods, path, ttl}) do
+  @spec call(Plug.Conn.t, {[String.t], Regex.t, integer, boolean}) :: Plug.Conn.t
+  def call(conn, {methods, path, ttl, enabled}) do
     if conn.method in methods
       and Regex.match?(path, conn.request_path)
+      and enabled
     do
       check_cache(conn, ttl)
     else
