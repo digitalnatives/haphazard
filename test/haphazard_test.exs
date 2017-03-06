@@ -25,12 +25,12 @@ defmodule HaphazardTest do
     :post
       |> conn("/myroute", "some_body")
       |> call()
-    assert conn.status == 200
+    assert !conn.halted
     conn =
     :post
       |> conn("/myroute", "some_body")
       |> call()
-    assert conn.status == 304
+    assert conn.halted
   end
 
   test "test not matching route, matching verb" do
@@ -38,12 +38,12 @@ defmodule HaphazardTest do
     :post
       |> conn("/notmyroute", "some_body")
       |> call()
-    assert conn.status == 200
+    assert !conn.halted
     conn =
     :post
       |> conn("/notmyroute", "some_body")
       |> call()
-    assert conn.status == 200
+    assert !conn.halted
   end
 
   test "test matching route, not matching verb" do
@@ -51,12 +51,12 @@ defmodule HaphazardTest do
     :get
       |> conn("/myroute", "some_body")
       |> call()
-    assert conn.status == 200
+    assert !conn.halted
     conn =
     :get
       |> conn("/myroute", "some_body")
       |> call()
-    assert conn.status == 200
+    assert !conn.halted
   end
 
   test "test not matching route, not matching verb" do
@@ -64,12 +64,12 @@ defmodule HaphazardTest do
     :get
       |> conn("/notmyroute", "some_body")
       |> call()
-    assert conn.status == 200
+    assert !conn.halted
     conn =
     :get
       |> conn("/notmyroute", "some_body")
       |> call()
-    assert conn.status == 200
+    assert !conn.halted
   end
 
   test "test cache expiration" do
@@ -77,18 +77,18 @@ defmodule HaphazardTest do
     :post
       |> conn("/myroute", "another_body")
       |> call()
-    assert conn.status == 200
+    assert !conn.halted
     conn =
     :post
       |> conn("/myroute", "another_body")
       |> call()
-    assert conn.status == 304
+    assert conn.halted
     :timer.sleep(3000)
     conn =
     :post
       |> conn("/myroute", "another_body")
       |> call()
-    assert conn.status == 200
+    assert !conn.halted
   end
 
   defmodule TestDisabledPlug do
@@ -111,12 +111,12 @@ defmodule HaphazardTest do
     :get
       |> conn("/myroute")
       |> call()
-    assert conn.status == 200
+    assert !conn.halted
     conn =
     :get
       |> conn("/myroute")
       |> call()
-    assert conn.status == 200
+    assert !conn.halted
   end
 
 end
