@@ -1,4 +1,4 @@
-# Haphazard
+# Haphazard [![Build Status](https://travis-ci.org/digitalnatives/haphazard.svg?branch=master)](https://travis-ci.org/digitalnatives/haphazard) [![Coverage Status](https://coveralls.io/repos/github/digitalnatives/haphazard/badge.svg?branch=master)](https://coveralls.io/github/digitalnatives/haphazard?branch=master) [![hex.pm version](https://img.shields.io/hexpm/v/haphazard.svg)](https://hex.pm/packages/haphazard) [![Hex.pm](https://img.shields.io/hexpm/l/haphazard.svg "License")](LICENSE)
 
 Haphazard is an ETS based plug for caching response body.
 Check the [Online Documentation](https://hexdocs.pm/haphazard)
@@ -34,4 +34,4 @@ plug Haphazard.Plug,
 The additional configurations reflect the default values.
 
 ## License
-Source code is released under MIT License. Check LICENSE for more information.
+Source code is released under MIT License. Check [LICENSE](LICENSE) for more information.
