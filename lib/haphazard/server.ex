@@ -28,6 +28,11 @@ defmodule Haphazard.Server do
     GenServer.cast(__MODULE__, {:store, key, body, ttl})
   end
 
+  @spec cleanup() :: :ok
+  def cleanup() do
+    GenServer.cast(__MODULE__, {})
+  end
+
   @spec handle_call({:lookup, any()}, pid(), any())
     :: {:reply, {:cached, any}, any()} | {:reply, :not_cached, any()}
   def handle_call({:lookup, key}, _from, state) do
