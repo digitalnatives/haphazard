@@ -104,19 +104,53 @@ defmodule HaphazardTest do
       Plug.Conn.send_resp(conn, 200, "ok")
   end
 
-  defp call(conn), do: TestDisabledPlug.call(conn, %{})
-
   test "test disabled plug" do
     conn =
     :get
       |> conn("/myroute")
-      |> call()
+      |> TestDisabledPlug.call(%{})
     assert !conn.halted
     conn =
     :get
       |> conn("/myroute")
-      |> call()
+      |> TestDisabledPlug.call(%{})
     assert !conn.halted
   end
 
+  defmodule TestCustomTTL do
+    use Plug.Builder
+
+    plug Haphazard.Cache,
+      ttl: 3000,
+      custom: {__MODULE__, :testfunc}
+
+    plug :endroute
+
+    def testfunc(_conn) do
+      {:save, 6000}
+    end
+
+    defp endroute(conn, _), do:
+      Plug.Conn.send_resp(conn, 200, "ok")
+  end
+
+  test "test custom ttl" do
+    conn =
+    :get
+      |> conn("/okroute", "another_body")
+      |> TestCustomTTL.call(%{})
+    assert !conn.halted
+    :timer.sleep(3000)
+    conn =
+    :get
+      |> conn("/okroute", "another_body")
+      |> TestCustomTTL.call(%{})
+    assert conn.halted
+    :timer.sleep(3000)
+    conn =
+    :get
+      |> conn("/okroute", "another_body")
+      |> TestCustomTTL.call(%{})
+    assert !conn.halted
+  end
 end
